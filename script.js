@@ -1,383 +1,246 @@
-// ================================
-// ROMANTIC LOVE LETTER -fdsaf JavaScript
-// Premium Interactions & Animations
-// ================================
+// ================================================
+// ROMANTIC NOIR - CINEMATIC INTERACTIONS
+// ================================================
+
+// ===== CONFIGURATION =====
+const CONFIG = {
+    particles: {
+        count: 100,
+        colors: ['#8B1538', '#E8B4A8', '#D4AF37'],
+        maxSize: 3,
+        speed: 0.3
+    }
+};
 
 // ===== PARTICLE SYSTEM =====
 const canvas = document.getElementById('particleCanvas');
 const ctx = canvas.getContext('2d');
+let particles = [];
 
-canvas.width = window.innerWidth;
-canvas.height = window.innerHeight;
+function resizeCanvas() {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+}
 
 class Particle {
-    constructor(type) {
-        this.type = type; // 'petal', 'star', 'heart'
+    constructor() {
+        this.reset();
+    }
+
+    reset() {
         this.x = Math.random() * canvas.width;
-        this.y = Math.random() * canvas.height - canvas.height;
-        this.speed = Math.random() * 1 + 0.5;
-        this.size = Math.random() * 10 + 5;
-        this.opacity = Math.random() * 0.5 + 0.3;
-        this.drift = Math.random() * 2 - 1;
-        this.rotation = Math.random() * 360;
-        this.rotationSpeed = Math.random() * 2 - 1;
+        this.y = Math.random() * canvas.height;
+        this.vx = (Math.random() - 0.5) * CONFIG.particles.speed;
+        this.vy = (Math.random() - 0.5) * CONFIG.particles.speed;
+        this.size = Math.random() * CONFIG.particles.maxSize + 1;
+        this.color = CONFIG.particles.colors[Math.floor(Math.random() * CONFIG.particles.colors.length)];
+        this.opacity = Math.random() * 0.5 + 0.2;
     }
 
     update() {
-        this.y += this.speed;
-        this.x += this.drift;
-        this.rotation += this.rotationSpeed;
+        this.x += this.vx;
+        this.y += this.vy;
 
-        if (this.y > canvas.height) {
-            this.y = -20;
-            this.x = Math.random() * canvas.width;
-        }
-
-        if (this.x > canvas.width) this.x = 0;
-        if (this.x < 0) this.x = canvas.width;
+        if (this.x < 0 || this.x > canvas.width) this.vx *= -1;
+        if (this.y < 0 || this.y > canvas.height) this.vy *= -1;
     }
 
     draw() {
-        ctx.save();
+        ctx.fillStyle = this.color;
         ctx.globalAlpha = this.opacity;
-        ctx.translate(this.x, this.y);
-        ctx.rotate(this.rotation * Math.PI / 180);
-
-        if (this.type === 'petal') {
-            // Rose petal
-            ctx.fillStyle = '#C41E3A';
-            ctx.beginPath();
-            ctx.ellipse(0, 0, this.size, this.size * 1.5, 0, 0, Math.PI * 2);
-            ctx.fill();
-        } else if (this.type === 'star') {
-            // Twinkling star
-            ctx.fillStyle = '#D4AF37';
-            ctx.beginPath();
-            for (let i = 0; i < 5; i++) {
-                ctx.lineTo(
-                    Math.cos((i * 4 * Math.PI) / 5) * this.size,
-                    Math.sin((i * 4 * Math.PI) / 5) * this.size
-                );
-            }
-            ctx.closePath();
-            ctx.fill();
-        } else if (this.type === 'heart') {
-            // Floating heart
-            ctx.fillStyle = '#B76E79';
-            const size = this.size;
-            ctx.beginPath();
-            ctx.moveTo(0, size / 4);
-            ctx.bezierCurveTo(-size / 2, -size / 4, -size, size / 4, 0, size);
-            ctx.bezierCurveTo(size, size / 4, size / 2, -size / 4, 0, size / 4);
-            ctx.fill();
-        }
-
-        ctx.restore();
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+        ctx.fill();
     }
 }
 
-// Create particles
-const particles = [];
-for (let i = 0; i < 30; i++) {
-    particles.push(new Particle('petal'));
-}
-for (let i = 0; i < 20; i++) {
-    particles.push(new Particle('star'));
-}
-for (let i = 0; i < 15; i++) {
-    particles.push(new Particle('heart'));
+function initParticles() {
+    particles = [];
+    for (let i = 0; i < CONFIG.particles.count; i++) {
+        particles.push(new Particle());
+    }
 }
 
 function animateParticles() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    
-    particles.forEach(particle => {
-        particle.update();
-        particle.draw();
+    particles.forEach(p => {
+        p.update();
+        p.draw();
     });
-    
     requestAnimationFrame(animateParticles);
 }
 
-animateParticles();
+// ===== SCROLL ANIMATIONS =====
+const observerOptions = {
+    threshold: 0.2,
+    rootMargin: '0px 0px -100px 0px'
+};
 
-// Resize canvas
-window.addEventListener('resize', () => {
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
+const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+        if (entry.isIntersecting) {
+            entry.target.classList.add('visible');
+        }
+    });
+}, observerOptions);
+
+// Observe all animatable elements
+document.addEventListener('DOMContentLoaded', () => {
+    const letterCard = document.querySelector('.letter-card');
+    const timelineItems = document.querySelectorAll('.timeline-item');
+
+    if (letterCard) observer.observe(letterCard);
+    timelineItems.forEach(item => observer.observe(item));
 });
-
-// ===== CUSTOM CURSOR =====
-const cursorTrail = document.querySelector('.cursor-trail');
-let mouseX = 0;
-let mouseY = 0;
-let cursorX = 0;
-let cursorY = 0;
-
-document.addEventListener('mousemove', (e) => {
-    mouseX = e.clientX;
-    mouseY = e.clientY;
-});
-
-function animateCursor() {
-    const speed = 0.15;
-    cursorX += (mouseX - cursorX) * speed;
-    cursorY += (mouseY - cursorY) * speed;
-    
-    cursorTrail.style.left = cursorX + 'px';
-    cursorTrail.style.top = cursorY + 'px';
-    
-    requestAnimationFrame(animateCursor);
-}
-
-animateCursor();
 
 // ===== MUSIC TOGGLE =====
-const musicToggle = document.getElementById('musicToggle');
-const ambientMusic = document.getElementById('ambientMusic');
-const musicOnIcon = document.querySelector('.music-on');
-const musicOffIcon = document.querySelector('.music-off');
-let isMusicPlaying = false;
-
-// Create a simple ambient tone using Web Audio API
-const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+const musicBtn = document.getElementById('musicToggle');
+let audioContext = null;
 let oscillator = null;
 let gainNode = null;
+let isPlaying = false;
 
-function startAmbientSound() {
-    if (oscillator) return;
-    
+musicBtn.addEventListener('click', () => {
+    isPlaying = !isPlaying;
+
+    if (isPlaying) {
+        playAmbientMusic();
+        musicBtn.style.background = 'rgba(232, 180, 168, 0.3)';
+        musicBtn.style.borderColor = 'var(--rose-gold)';
+    } else {
+        stopAmbientMusic();
+        musicBtn.style.background = 'rgba(255, 255, 255, 0.1)';
+        musicBtn.style.borderColor = 'rgba(255, 255, 255, 0.2)';
+    }
+});
+
+function playAmbientMusic() {
+    if (!audioContext) {
+        audioContext = new (window.AudioContext || window.webkitAudioContext)();
+    }
+
     oscillator = audioContext.createOscillator();
     gainNode = audioContext.createGain();
-    
+
     oscillator.type = 'sine';
-    oscillator.frequency.setValueAtTime(220, audioContext.currentTime); // A3 note
-    
-    gainNode.gain.setValueAtTime(0, audioContext.currentTime);
-    gainNode.gain.linearRampToValueAtTime(0.03, audioContext.currentTime + 2);
-    
+    oscillator.frequency.setValueAtTime(220, audioContext.currentTime);
+    gainNode.gain.setValueAtTime(0.02, audioContext.currentTime);
+
     oscillator.connect(gainNode);
     gainNode.connect(audioContext.destination);
-    
     oscillator.start();
-    
-    // Add subtle frequency variation for ambient feel
-    setInterval(() => {
-        if (oscillator && isMusicPlaying) {
-            const newFreq = 220 + Math.random() * 20 - 10;
-            oscillator.frequency.setValueAtTime(newFreq, audioContext.currentTime);
-        }
-    }, 3000);
 }
 
-function stopAmbientSound() {
+function stopAmbientMusic() {
     if (oscillator) {
-        gainNode.gain.setValueAtTime(gainNode.gain.value, audioContext.currentTime);
-        gainNode.gain.linearRampToValueAtTime(0, audioContext.currentTime + 1);
-        
-        setTimeout(() => {
-            if (oscillator) {
-                oscillator.stop();
-                oscillator = null;
-            }
-        }, 1000);
+        oscillator.stop();
+        oscillator = null;
     }
 }
 
-musicToggle.addEventListener('click', () => {
-    isMusicPlaying = !isMusicPlaying;
-    
-    if (isMusicPlaying) {
-        startAmbientSound();
-        musicOnIcon.style.display = 'block';
-        musicOffIcon.style.display = 'none';
-    } else {
-        stopAmbientSound();
-        musicOnIcon.style.display = 'none';
-        musicOffIcon.style.display = 'block';
+// ===== INTERACTIVE HEART =====
+const finalHeart = document.getElementById('finalHeart');
+let heartClicks = 0;
+
+finalHeart.addEventListener('click', () => {
+    heartClicks++;
+
+    // Create floating hearts
+    createFloatingHeart(event.clientX, event.clientY);
+
+    // Change label after clicks
+    const label = finalHeart.querySelector('.heart-label');
+    if (heartClicks === 1) {
+        label.textContent = 'Again! 💕';
+    } else if (heartClicks === 3) {
+        label.textContent = 'You make my heart flutter! 💗';
+    } else if (heartClicks === 5) {
+        label.textContent = 'I love you too! ❤️';
+        createHeartExplosion(finalHeart);
     }
 });
 
-// ===== ENVELOPE OPENING =====
-const envelopeWrapper = document.getElementById('envelopeWrapper');
-const openLetterBtn = document.getElementById('openLetterBtn');
-const letterContent = document.getElementById('letterContent');
+function createFloatingHeart(x, y) {
+    const heart = document.createElement('div');
+    heart.innerHTML = '❤️';
+    heart.style.position = 'fixed';
+    heart.style.left = x + 'px';
+    heart.style.top = y + 'px';
+    heart.style.fontSize = '2rem';
+    heart.style.pointerEvents = 'none';
+    heart.style.zIndex = '9999';
+    heart.style.animation = 'floatUp 2s ease-out forwards';
 
-openLetterBtn.addEventListener('click', () => {
-    // Open envelope
-    envelopeWrapper.classList.add('opening');
-    
-    setTimeout(() => {
-        // Hide envelope and show letter
-        envelopeWrapper.classList.add('hide');
-        
-        setTimeout(() => {
-            envelopeWrapper.style.display = 'none';
-            letterContent.classList.add('show');
-            
-            // Start typewriter effect
-            startTypewriterEffect();
-        }, 800);
-    }, 1200);
-});
+    document.body.appendChild(heart);
 
-// ===== TYPEWRITER EFFECT =====
-function startTypewriterEffect() {
-    const paragraphs = document.querySelectorAll('.letter-text p');
-    
-    // Since CSS animation handles the reveal, we just need to ensure
-    // they're visible. The staggered animation is already in CSS.
-    paragraphs.forEach((p, index) => {
-        setTimeout(() => {
-            p.style.opacity = '1';
-        }, index * 200);
-    });
+    setTimeout(() => heart.remove(), 2000);
 }
 
-// ===== HIDDEN MESSAGES =====
-const hiddenNotes = document.querySelectorAll('.hidden-note');
+function createHeartExplosion(element) {
+    const rect = element.getBoundingClientRect();
+    const centerX = rect.left + rect.width / 2;
+    const centerY = rect.top + rect.height / 2;
 
-hiddenNotes.forEach(note => {
-    note.addEventListener('click', () => {
-        // Create floating heart effect
-        const heart = document.createElement('div');
-        heart.textContent = '❤';
-        heart.style.position = 'fixed';
-        heart.style.left = note.getBoundingClientRect().left + 'px';
-        heart.style.top = note.getBoundingClientRect().top + 'px';
-        heart.style.fontSize = '2rem';
-        heart.style.pointerEvents = 'none';
-        heart.style.zIndex = '9999';
-        heart.style.color = '#C41E3A';
-        heart.style.animation = 'floatUp 2s ease-out forwards';
-        
-        document.body.appendChild(heart);
-        
+    for (let i = 0; i < 12; i++) {
+        const angle = (i / 12) * Math.PI * 2;
+        const distance = 100;
+        const x = centerX + Math.cos(angle) * distance;
+        const y = centerY + Math.sin(angle) * distance;
+
         setTimeout(() => {
-            heart.remove();
-        }, 2000);
-    });
-});
+            createFloatingHeart(centerX, centerY);
+        }, i * 100);
+    }
+}
 
-// Add floating animation
+// Add CSS for floating animation
 const style = document.createElement('style');
 style.textContent = `
     @keyframes floatUp {
         0% {
             opacity: 1;
-            transform: translateY(0) scale(1);
+            transform: translateY(0) scale(1) rotate(0deg);
         }
         100% {
             opacity: 0;
-            transform: translateY(-100px) scale(1.5);
+            transform: translateY(-150px) scale(1.5) rotate(20deg);
         }
     }
 `;
 document.head.appendChild(style);
 
-// ===== PARALLAX SCROLL EFFECT =====
+// ===== PARALLAX EFFECT =====
 window.addEventListener('scroll', () => {
     const scrolled = window.pageYOffset;
-    const letterPaper = document.querySelector('.letter-paper');
-    
-    if (letterPaper) {
-        letterPaper.style.transform = `translateY(${scrolled * 0.1}px)`;
+    const heroContent = document.querySelector('.hero-content');
+
+    if (heroContent) {
+        heroContent.style.transform = `translateY(${scrolled * 0.5}px)`;
+        heroContent.style.opacity = 1 - (scrolled / 500);
     }
 });
 
-// ===== SMOOTH SCROLL =====
-document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-    anchor.addEventListener('click', function (e) {
-        e.preventDefault();
-        const target = document.querySelector(this.getAttribute('href'));
-        if (target) {
-            target.scrollIntoView({
-                behavior: 'smooth',
-                block: 'start'
-            });
-        }
-    });
-});
-
-// ===== ENTRANCE CHOREOGRAPHY =====
+// ===== INITIALIZATION =====
 window.addEventListener('load', () => {
-    document.body.style.opacity = '0';
-    
-    setTimeout(() => {
-        document.body.style.transition = 'opacity 1s ease';
-        document.body.style.opacity = '1';
-    }, 100);
+    resizeCanvas();
+    initParticles();
+    animateParticles();
 });
 
-// ===== PERFORMANCE OPTIMIZATION =====
-// Throttle scroll and resize events
-function throttle(func, wait) {
-    let timeout;
-    return function executedFunction(...args) {
-        const later = () => {
-            clearTimeout(timeout);
-            func(...args);
-        };
-        clearTimeout(timeout);
-        timeout = setTimeout(later, wait);
-    };
+window.addEventListener('resize', () => {
+    resizeCanvas();
+    initParticles();
+});
+
+// ===== SMOOTH SCROLL FOR INDICATOR =====
+const scrollIndicator = document.querySelector('.scroll-indicator');
+if (scrollIndicator) {
+    scrollIndicator.addEventListener('click', () => {
+        window.scrollTo({
+            top: window.innerHeight,
+            behavior: 'smooth'
+        });
+    });
 }
 
-// ===== ACCESSIBILITY =====
-// Restore cursor for screen readers and keyboard navigation
-document.addEventListener('keydown', (e) => {
-    if (e.key === 'Tab') {
-        document.body.style.cursor = 'auto';
-    }
-});
-
-document.addEventListener('mousedown', () => {
-    document.body.style.cursor = 'none';
-});
-
-// ===== HEART CURSOR TRAIL =====
-let hearts = [];
-
-document.addEventListener('click', (e) => {
-    // Create heart at click position
-    const heart = document.createElement('div');
-    heart.textContent = '♥';
-    heart.style.position = 'fixed';
-    heart.style.left = e.clientX + 'px';
-    heart.style.top = e.clientY + 'px';
-    heart.style.fontSize = '1.5rem';
-    heart.style.color = '#B76E79';
-    heart.style.pointerEvents = 'none';
-    heart.style.zIndex = '9998';
-    heart.style.animation = 'heartPop 1s ease-out forwards';
-    heart.style.textShadow = '0 2px 8px rgba(183, 110, 121, 0.6)';
-    
-    document.body.appendChild(heart);
-    
-    setTimeout(() => {
-        heart.remove();
-    }, 1000);
-});
-
-// Add heart pop animation
-const heartPopStyle = document.createElement('style');
-heartPopStyle.textContent = `
-    @keyframes heartPop {
-        0% {
-            opacity: 1;
-            transform: scale(0) rotate(0deg);
-        }
-        50% {
-            transform: scale(1.2) rotate(10deg);
-        }
-        100% {
-            opacity: 0;
-            transform: scale(0.5) rotate(20deg) translateY(-50px);
-        }
-    }
-`;
-document.head.appendChild(heartPopStyle);
-
-// ===== LOG INITIALIZATION =====
-console.log('%c♥ Love Letter Initialized ♥', 'color: #C41E3A; font-size: 20px; font-weight: bold;');
-console.log('%cWith all my love...', 'color: #B76E79; font-size: 14px; font-style: italic;');
+console.log('💖 Love Letter Initialized - Click the heart at the bottom!');
