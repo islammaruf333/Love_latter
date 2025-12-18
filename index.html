@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>A Letter From My Heart</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Great+Vibes&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap"
+        rel="stylesheet">
+</head>
+
+<body>
+    <!-- Canvas for particles -->
+    <canvas id="particleCanvas"></canvas>
+
+    <!-- Custom cursor trail -->
+    <div class="cursor-trail"></div>
+
+    <!-- Music toggle -->
+    <button class="music-toggle" id="musicToggle" aria-label="Toggle music">
+        <svg class="music-icon music-on" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+            stroke-width="2">
+            <path d="M9 18V5l12-2v13"></path>
+            <circle cx="6" cy="18" r="3"></circle>
+            <circle cx="18" cy="16" r="3"></circle>
+        </svg>
+        <svg class="music-icon music-off" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+            stroke-width="2" style="display: none;">
+            <line x1="1" y1="1" x2="23" y2="23"></line>
+            <path d="M9 18V5l12-2v13"></path>
+            <circle cx="6" cy="18" r="3"></circle>
+            <circle cx="18" cy="16" r="3"></circle>
+        </svg>
+    </button>
+
+    <!-- Ambient audio -->
+    <audio id="ambientMusic" loop>
+        <source src="data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQAAAAA="
+            type="audio/wav">
+    </audio>
+
+    <!-- Main container -->
+    <div class="container">
+        <!-- Envelope opening animation -->
+        <div class="envelope-wrapper" id="envelopeWrapper">
+            <div class="envelope">
+                <div class="envelope-flap"></div>
+                <div class="envelope-body">
+                    <div class="heart-seal">
+                        <svg width="40" height="40" viewBox="0 0 24 24" fill="currentColor">
+                            <path
+                                d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
+                        </svg>
+                    </div>
+                </div>
+            </div>
+            <button class="open-letter-btn" id="openLetterBtn">
+                Open Your Letter
+                <span class="btn-glow"></span>
+            </button>
+        </div>
+
+        <!-- Letter content -->
+        <div class="letter-content" id="letterContent">
+            <div class="letter-paper">
+                <!-- Decorative header -->
+                <div class="letter-header">
+                    <div class="decorative-line"></div>
+                    <svg class="heart-icon" width="30" height="30" viewBox="0 0 24 24" fill="currentColor">
+                        <path
+                            d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
+                    </svg>
+                    <div class="decorative-line"></div>
+                </div>
+
+                <!-- Letter text with typewriter effect -->
+                <div class="letter-text" id="letterText">
+                    <p class="greeting">My Dearest Rifah,</p>
+
+                    <p>As I write these words, my heart overflows with emotions that no language could fully capture.
+                        Yet, I must try, for you deserve to know the depth of what you mean to me.</p>
+
+                    <p>From the moment you entered my life, everything changed. The world became more vibrant, colors
+                        more vivid, and even the simplest moments transformed into treasured memories. Your smile has
+                        the power to brighten my darkest days, and your laughter is the melody that plays endlessly in
+                        my heart.</p>
+
+                    <p>I remember the first time I truly saw you—not just with my eyes, but with my soul. The way the
+                        light danced in your eyes, the gentle sound of your voice, the warmth of your presence. In that
+                        moment, I knew that my heart had found its home.</p>
+
+                    <p>You are my sunrise after the longest night, my calm in every storm, my inspiration in every
+                        dream. With you, I've discovered parts of myself I never knew existed. You've taught me that
+                        love isn't just a feeling—it's a choice we make every day, and I choose you, always.</p>
+
+                    <p>Every shared glance, every gentle touch, every whispered word between us is a verse in the
+                        eternal poem of our love. When I hold your hand, I'm not just holding fingers—I'm holding my
+                        entire world, my future, my everything.</p>
+
+                    <p>There are moments when I catch myself simply watching you—the way you lose yourself in thought,
+                        how you care for those around you, the passion in your eyes when you speak about your dreams. In
+                        these quiet observations, I fall in love with you all over again.</p>
+
+                    <p>My love for you is not perfect, for I am not perfect. But it is real, it is deep, and it is
+                        eternal. It's in the way I think of you first thing in the morning and last thing at night. It's
+                        in every beat of my heart that whispers your name.</p>
+
+                    <p>I promise to cherish you, to support your dreams, to be your safe haven when the world feels too
+                        heavy. I promise to grow with you, to laugh with you, to build a beautiful life alongside you.
+                        Through every season, every challenge, every joy—I promise to love you.</p>
+
+                    <p>You are my today and all of my tomorrows. My heart belongs to you, completely and forever.</p>
+
+                    <p class="signature">
+                        With all my love,<br>
+                        <span class="signature-name">Forever Yours Maruf</span>
+                    </p>
+                </div>
+
+                <!-- Hidden messages (click to reveal) -->
+                <div class="hidden-messages">
+                    <div class="hidden-note" data-message="You make my heart skip a beat ♥">
+                        <span class="note-icon">✉</span>
+                    </div>
+                    <div class="hidden-note" data-message="Every moment with you is magical ✨">
+                        <span class="note-icon">✉</span>
+                    </div>
+                    <div class="hidden-note" data-message="You are my everything 🌹">
+                        <span class="note-icon">✉</span>
+                    </div>
+                </div>
+
+                <!-- Decorative footer -->
+                <div class="letter-footer">
+                    <div class="decorative-line"></div>
+                    <div class="rose-icon">🌹</div>
+                    <div class="decorative-line"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>
